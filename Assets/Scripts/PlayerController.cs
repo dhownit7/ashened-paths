@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private Animator animator;
     public float moveSpeed = 7f;
     public float jumpForce = 12f;
     private Rigidbody2D rb;
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -60,6 +62,8 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             coyoteTimeCounter = 0f;
         }
+
+        animator.SetFloat("Speed", Mathf.Abs(moveInput));
     }
 
     void Flip()
