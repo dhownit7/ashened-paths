@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +14,15 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R) && gameOverText.gameObject.activeSelf)
+        {
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+    }
+
     public void AddScore(int amount)
     {
         score += amount;
@@ -24,8 +34,13 @@ public class GameManager : MonoBehaviour
         healthText.text = "HP: " + health;
     }
 
+    public TextMeshProUGUI gameOverText;
+
     public void GameOver()
     {
-        Debug.Log("Game Over!");
+        gameOverText.gameObject.SetActive(true);
+        Time.timeScale = 0f;
     }
+
+
 }
