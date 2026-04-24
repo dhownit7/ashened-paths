@@ -26,7 +26,7 @@ public class EnemyContact : MonoBehaviour
 
     void RespawnPlayer(GameObject player)
     {
-        // For now just reset position
-        player.transform.position = new Vector2(-8, -3);
+        PlayerController pc = player.GetComponent<PlayerController>();
+        pc.Respawn();
     }
 }

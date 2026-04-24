@@ -2,14 +2,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private Animator animator;
     public float moveSpeed = 7f;
     public float jumpForce = 12f;
     private Rigidbody2D rb;
     private bool facingRight = true;
+    private Animator animator;
+    public Vector2 spawnPoint;
 
     public Transform groundCheck;
-    public float groundCheckRadius = 0.1f;
+    public float groundCheckRadius = 0.3f;
     public LayerMask groundLayer;
 
     private float coyoteTime = 0.15f;
@@ -21,42 +22,33 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        spawnPoint = transform.position;
     }
 
     void Update()
     {
-        // Horizontal movement
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
 
-        // Flip
-        if (moveInput > 0 && !facingRight)
-            Flip();
-        else if (moveInput < 0 && facingRight)
-            Flip();
+        if (moveInput > 0 && !facingRight) Flip();
+        else if (moveInput < 0 && facingRight) Flip();
 
-        // Coyote time
         if (Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer))
             coyoteTimeCounter = coyoteTime;
         else
             coyoteTimeCounter -= Time.deltaTime;
 
-        Debug.Log("Grounded: " + (coyoteTimeCounter > 0));
-
-        // Jump buffer
         if (Input.GetButtonDown("Jump"))
             jumpBufferCounter = jumpBufferTime;
         else
             jumpBufferCounter -= Time.deltaTime;
 
-        // Jump
         if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpBufferCounter = 0f;
         }
 
-        // Variable jump height - release early for smaller jump
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
@@ -64,6 +56,12 @@ public class PlayerController : MonoBehaviour
         }
 
         animator.SetFloat("Speed", Mathf.Abs(moveInput));
+    }
+
+    public void Respawn()
+    {
+        transform.position = spawnPoint;
+        rb.velocity = Vector2.zero;
     }
 
     void Flip()
