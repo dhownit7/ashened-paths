@@ -6,20 +6,15 @@ public class EnemyContact : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Check if player is above the enemy (stomping)
             if (collision.contacts[0].normal.y < -0.5f)
             {
-                // Player jumped on enemy - destroy enemy
                 Destroy(gameObject);
-
-                // Bounce player up
                 Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
                 playerRb.velocity = new Vector2(playerRb.velocity.x, 10f);
             }
             else
             {
-                // Enemy touched player from side - kill player
-                RespawnPlayer(collision.gameObject);
+                collision.gameObject.GetComponent<PlayerController>().TakeDamage();
             }
         }
     }

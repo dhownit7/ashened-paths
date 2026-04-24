@@ -1,7 +1,14 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+    public int maxHealth = 3;
+    private int currentHealth;
+    private bool isInvincible = false;
+
     public float moveSpeed = 7f;
     public float jumpForce = 12f;
     private Rigidbody2D rb;
@@ -23,6 +30,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spawnPoint = transform.position;
+        currentHealth = maxHealth;
     }
 
     void Update()
@@ -79,5 +87,40 @@ public class PlayerController : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
+    }
+
+    public void TakeDamage()
+    {
+        if (isInvincible) return;
+
+        currentHealth--;
+        GameManager.instance.UpdateHealth(currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            GameManager.instance.GameOver();
+            Respawn();
+            currentHealth = maxHealth;
+            GameManager.instance.UpdateHealth(currentHealth);
+        }
+        else
+        {
+            StartCoroutine(InvincibilityFrames());
+            Respawn();
+        }
+    }
+
+    IEnumerator InvincibilityFrames()
+    {
+        isInvincible = true;
+        // Flash the player
+        for (int i = 0; i < 6; i++)
+        {
+            GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.3f);
+            yield return new WaitForSeconds(0.1f);
+            GetComponent<SpriteRenderer>().color = Color.white;
+            yield return new WaitForSeconds(0.1f);
+        }
+        isInvincible = false;
     }
 }
