@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
         else
             coyoteTimeCounter -= Time.deltaTime;
 
+        Debug.Log("Grounded: " + (coyoteTimeCounter > 0));
+
         // Jump buffer
         if (Input.GetButtonDown("Jump"))
             jumpBufferCounter = jumpBufferTime;
