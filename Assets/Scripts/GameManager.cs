@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+        UpdateHealth(3);
     }
 
     void Update()
